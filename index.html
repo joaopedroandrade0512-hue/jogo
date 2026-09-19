@@ -1,0 +1,157 @@
+    <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogo de Futebol</title>
+
+<style>
+  body {
+    margin: 0;
+    background: #111;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+
+  h1 {
+    margin: 15px;
+  }
+
+  #campo {
+    position: relative;
+    width: 95%;
+    max-width: 600px;
+    height: 400px;
+    margin: auto;
+    background: #168a35;
+    border: 4px solid white;
+    overflow: hidden;
+  }
+
+  #linha {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    height: 100%;
+    border-left: 2px solid white;
+  }
+
+  #bola {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: white;
+    border-radius: 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  #jogador {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: #1769ff;
+    border-radius: 50%;
+    left: 50px;
+    top: 180px;
+  }
+
+  #placar {
+    font-size: 24px;
+    margin: 10px;
+  }
+
+  button {
+    font-size: 20px;
+    padding: 12px 20px;
+    margin: 5px;
+    border-radius: 10px;
+    border: none;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>⚽ Jogo de Futebol</h1>
+
+<div id="placar">Você 0 × 0 CPU</div>
+
+<div id="campo">
+  <div id="linha"></div>
+  <div id="jogador"></div>
+  <div id="bola"></div>
+</div>
+
+<div>
+  <button onclick="cima()">⬆️</button><br>
+  <button onclick="esquerda()">⬅️</button>
+  <button onclick="chutar()">⚽ CHUTAR</button>
+  <button onclick="direita()">➡️</button><br>
+  <button onclick="baixo()">⬇️</button>
+</div>
+
+<script>
+let jogador = document.getElementById("jogador");
+let bola = document.getElementById("bola");
+
+let x = 50;
+let y = 180;
+
+let bolaX = 50;
+let bolaY = 180;
+
+function atualizar() {
+  jogador.style.left = x + "px";
+  jogador.style.top = y + "px";
+}
+
+function cima() {
+  y -= 20;
+  if (y < 0) y = 0;
+  atualizar();
+}
+
+function baixo() {
+  y += 20;
+  if (y > 360) y = 360;
+  atualizar();
+}
+
+function esquerda() {
+  x -= 20;
+  if (x < 0) x = 0;
+  atualizar();
+}
+
+function direita() {
+  x += 20;
+  if (x > 550) x = 550;
+  atualizar();
+}
+
+function chutar() {
+  bolaX = x + 50;
+  bolaY = y;
+
+  bola.style.left = bolaX + "px";
+  bola.style.top = bolaY + "px";
+
+  setTimeout(() => {
+    bolaX += 250;
+
+    if (bolaX > 570) {
+      bolaX = 50;
+    }
+
+    bola.style.left = bolaX + "px";
+  }, 300);
+}
+
+atualizar();
+</script>
+
+</body>
+</html>
