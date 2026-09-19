@@ -1,156 +1,655 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jogo de Futebol</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Ultimate Football</title>
 
 <style>
-  body {
-    margin: 0;
-    background: #111;
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+body{
+  margin:0;
+  background:#07100b;
+  color:white;
+  font-family:Arial,Helvetica,sans-serif;
+  overflow:hidden;
+}
+
+#menu{
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 50% 20%,#176b35,#06100a 65%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
+}
+
+#menu h1{
+  font-size:48px;
+  margin:0 0 8px;
+  letter-spacing:3px;
+  text-shadow:0 5px 20px #000;
+}
+
+#menu p{
+  color:#b9d8c2;
+  margin-bottom:30px;
+}
+
+.menuButton{
+  width:260px;
+  padding:16px;
+  margin:7px;
+  border:0;
+  border-radius:10px;
+  background:linear-gradient(135deg,#16a34a,#08752f);
+  color:white;
+  font-size:19px;
+  font-weight:bold;
+  box-shadow:0 6px 18px #0008;
+}
+
+#game{
+  display:none;
+  width:100vw;
+  height:100vh;
+  position:relative;
+  background:#111;
+}
+
+#score{
+  position:absolute;
+  top:15px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:5;
+  background:#07110bcc;
+  border:1px solid #ffffff33;
+  padding:9px 18px;
+  border-radius:12px;
+  text-align:center;
+  min-width:190px;
+  box-shadow:0 5px 20px #0008;
+}
+
+#teams{
+  font-size:13px;
+  color:#b9d8c2;
+}
+
+#goals{
+  font-size:25px;
+  font-weight:bold;
+  margin:2px;
+}
+
+#time{
+  font-size:12px;
+  color:#ddd;
+}
+
+#field{
+  position:absolute;
+  width:min(1100px,96vw);
+  height:min(650px,72vh);
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #16833b 0px,
+      #16833b 70px,
+      #147936 70px,
+      #147936 140px
+    );
+  border:4px solid white;
+  box-shadow:0 0 40px #000;
+  overflow:hidden;
+}
+
+.line{
+  position:absolute;
+  background:#ffffffaa;
+}
+
+.midline{
+  width:3px;
+  height:100%;
+  left:50%;
+  top:0;
+}
+
+.centerCircle{
+  position:absolute;
+  width:150px;
+  height:150px;
+  border:3px solid #ffffffaa;
+  border-radius:50%;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+}
+
+.centerDot{
+  position:absolute;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:white;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+}
+
+.box{
+  position:absolute;
+  width:150px;
+  height:300px;
+  top:50%;
+  transform:translateY(-50%);
+  border:3px solid #ffffffaa;
+}
+
+.box.left{left:-3px}
+.box.right{right:-3px}
+
+.goal{
+  position:absolute;
+  width:30px;
+  height:130px;
+  top:50%;
+  transform:translateY(-50%);
+  border:4px solid white;
+}
+
+.goal.left{left:-30px}
+.goal.right{right:-30px}
+
+.player{
+  position:absolute;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:bold;
+  border:2px solid white;
+  box-shadow:0 5px 12px #0009;
+  z-index:3;
+}
+
+.blue{
+  background:linear-gradient(145deg,#2575ff,#07399e);
+}
+
+.red{
+  background:linear-gradient(145deg,#ff4a4a,#990b0b);
+}
+
+#user{
+  width:48px;
+  height:48px;
+  border:3px solid #ffe600;
+  box-shadow:0 0 18px #ffe60099;
+}
+
+#ball{
+  position:absolute;
+  width:23px;
+  height:23px;
+  background:white;
+  border-radius:50%;
+  border:3px solid #222;
+  z-index:4;
+  box-shadow:0 3px 8px #0008;
+}
+
+#controls{
+  position:absolute;
+  bottom:15px;
+  left:15px;
+  right:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  z-index:8;
+  pointer-events:none;
+}
+
+#movement{
+  display:grid;
+  grid-template-columns:55px 55px 55px;
+  gap:5px;
+  pointer-events:auto;
+}
+
+#movement button,
+#actions button{
+  width:55px;
+  height:55px;
+  border:0;
+  border-radius:50%;
+  color:white;
+  background:#07110dcc;
+  border:1px solid #ffffff55;
+  font-size:20px;
+  font-weight:bold;
+}
+
+#up{grid-column:2}
+#left{grid-column:1}
+#down{grid-column:2}
+#right{grid-column:3}
+
+#actions{
+  display:flex;
+  gap:8px;
+  pointer-events:auto;
+}
+
+#actions button{
+  width:70px;
+  height:70px;
+  font-size:14px;
+}
+
+#shoot{
+  background:#d83a22!important;
+}
+
+#pass{
+  background:#1769d1!important;
+}
+
+#sprint{
+  background:#168c43!important;
+}
+
+#message{
+  position:absolute;
+  top:95px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#0009;
+  padding:8px 14px;
+  border-radius:8px;
+  z-index:7;
+  opacity:0;
+  transition:.2s;
+}
+
+@media(max-width:600px){
+  #field{
+    height:62vh;
+    width:94vw;
   }
 
-  h1 {
-    margin: 15px;
+  #menu h1{
+    font-size:36px;
   }
 
-  #campo {
-    position: relative;
-    width: 95%;
-    max-width: 600px;
-    height: 400px;
-    margin: auto;
-    background: #168a35;
-    border: 4px solid white;
-    overflow: hidden;
+  .player{
+    width:34px;
+    height:34px;
+    font-size:9px;
   }
 
-  #linha {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    height: 100%;
-    border-left: 2px solid white;
+  #user{
+    width:40px;
+    height:40px;
   }
 
-  #bola {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    background: white;
-    border-radius: 50%;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+  #ball{
+    width:19px;
+    height:19px;
   }
 
-  #jogador {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    background: #1769ff;
-    border-radius: 50%;
-    left: 50px;
-    top: 180px;
+  #movement{
+    grid-template-columns:48px 48px 48px;
   }
 
-  #placar {
-    font-size: 24px;
-    margin: 10px;
+  #movement button{
+    width:48px;
+    height:48px;
   }
 
-  button {
-    font-size: 20px;
-    padding: 12px 20px;
-    margin: 5px;
-    border-radius: 10px;
-    border: none;
+  #actions button{
+    width:60px;
+    height:60px;
   }
+}
 </style>
 </head>
 
 <body>
 
-<h1>⚽ Jogo de Futebol</h1>
-
-<div id="placar">Você 0 × 0 CPU</div>
-
-<div id="campo">
-  <div id="linha"></div>
-  <div id="jogador"></div>
-  <div id="bola"></div>
+<div id="menu">
+  <h1>⚽ ULTIMATE FOOTBALL</h1>
+  <p>Partida rápida</p>
+  <button class="menuButton" onclick="startGame()">JOGAR</button>
+  <button class="menuButton" onclick="showHelp()">COMO JOGAR</button>
 </div>
 
-<div>
-  <button onclick="cima()">⬆️</button><br>
-  <button onclick="esquerda()">⬅️</button>
-  <button onclick="chutar()">⚽ CHUTAR</button>
-  <button onclick="direita()">➡️</button><br>
-  <button onclick="baixo()">⬇️</button>
+<div id="game">
+
+  <div id="score">
+    <div id="teams">BLUE FC &nbsp; • &nbsp; RED UNITED</div>
+    <div id="goals">
+      <span id="blueScore">0</span>
+      ×
+      <span id="redScore">0</span>
+    </div>
+    <div id="time">00:00</div>
+  </div>
+
+  <div id="message"></div>
+
+  <div id="field">
+
+    <div class="line midline"></div>
+    <div class="centerCircle"></div>
+    <div class="centerDot"></div>
+
+    <div class="box left"></div>
+    <div class="box right"></div>
+
+    <div class="goal left"></div>
+    <div class="goal right"></div>
+
+    <!-- BLUE TEAM -->
+
+    <div class="player blue" style="left:70px;top:50%;transform:translateY(-50%)">1</div>
+
+    <div class="player blue" style="left:180px;top:20%">2</div>
+    <div class="player blue" style="left:180px;top:42%">3</div>
+    <div class="player blue" style="left:180px;top:65%">4</div>
+    <div class="player blue" style="left:180px;top:83%">5</div>
+
+    <div class="player blue" style="left:350px;top:35%">6</div>
+    <div class="player blue" style="left:350px;top:65%">8</div>
+
+    <div class="player blue" style="left:480px;top:25%">7</div>
+    <div class="player blue" style="left:480px;top:50%">10</div>
+    <div class="player blue" style="left:480px;top:75%">11</div>
+
+    <div id="user" class="player blue" style="left:360px;top:48%">10</div>
+
+    <!-- RED TEAM -->
+
+    <div class="player red" style="right:70px;top:50%;transform:translateY(-50%)">1</div>
+
+    <div class="player red" style="right:180px;top:20%">2</div>
+    <div class="player red" style="right:180px;top:42%">3</div>
+    <div class="player red" style="right:180px;top:65%">4</div>
+    <div class="player red" style="right:180px;top:83%">5</div>
+
+    <div class="player red" style="right:350px;top:35%">6</div>
+    <div class="player red" style="right:350px;top:65%">8</div>
+
+    <div class="player red" style="right:480px;top:25%">7</div>
+    <div class="player red" style="right:480px;top:50%">10</div>
+    <div class="player red" style="right:480px;top:75%">11</div>
+
+    <div id="ball"></div>
+
+  </div>
+
+  <div id="controls">
+
+    <div id="movement">
+      <button id="up" onclick="move(0,-1)">⬆</button>
+      <button id="left" onclick="move(-1,0)">⬅</button>
+      <button id="down" onclick="move(0,1)">⬇</button>
+      <button id="right" onclick="move(1,0)">➡</button>
+    </div>
+
+    <div id="actions">
+      <button id="pass" onclick="passBall()">PASSE</button>
+      <button id="shoot" onclick="shoot()">CHUTE</button>
+      <button id="sprint" onclick="sprint()">CORRER</button>
+    </div>
+
+  </div>
+
 </div>
 
 <script>
-let jogador = document.getElementById("jogador");
-let bola = document.getElementById("bola");
 
-let x = 50;
-let y = 180;
+const field = document.getElementById("field");
+const user = document.getElementById("user");
+const ball = document.getElementById("ball");
 
-let bolaX = 50;
-let bolaY = 180;
+let x = 360;
+let y = 48;
 
-function atualizar() {
-  jogador.style.left = x + "px";
-  jogador.style.top = y + "px";
+let ballX = 380;
+let ballY = 48;
+
+let blueScore = 0;
+let redScore = 0;
+
+let seconds = 0;
+let playing = false;
+let sprinting = false;
+
+function startGame(){
+
+  document.getElementById("menu").style.display="none";
+  document.getElementById("game").style.display="block";
+
+  playing=true;
+
+  resetPositions();
+
+  showMessage("COMEÇOU!");
+
 }
 
-function cima() {
-  y -= 20;
-  if (y < 0) y = 0;
-  atualizar();
+function resetPositions(){
+
+  x=360;
+  y=48;
+
+  ballX=380;
+  ballY=48;
+
+  updatePlayer();
+  updateBall();
+
 }
 
-function baixo() {
-  y += 20;
-  if (y > 360) y = 360;
-  atualizar();
+function updatePlayer(){
+
+  user.style.left=x+"px";
+  user.style.top=y+"px";
+
 }
 
-function esquerda() {
-  x -= 20;
-  if (x < 0) x = 0;
-  atualizar();
+function updateBall(){
+
+  ball.style.left=ballX+"px";
+  ball.style.top=ballY+"px";
+
 }
 
-function direita() {
-  x += 20;
-  if (x > 550) x = 550;
-  atualizar();
+function move(dx,dy){
+
+  if(!playing)return;
+
+  let speed=sprinting?30:18;
+
+  x+=dx*speed;
+  y+=dy*speed;
+
+  const maxX=field.clientWidth-50;
+  const maxY=field.clientHeight-50;
+
+  x=Math.max(5,Math.min(maxX,x));
+  y=Math.max(5,Math.min(maxY,y));
+
+  updatePlayer();
+
 }
 
-function chutar() {
-  bolaX = x + 50;
-  bolaY = y;
+function sprint(){
 
-  bola.style.left = bolaX + "px";
-  bola.style.top = bolaY + "px";
+  sprinting=!sprinting;
 
-  setTimeout(() => {
-    bolaX += 250;
+  if(sprinting){
+    showMessage("CORRENDO!");
+  }else{
+    showMessage("VELOCIDADE NORMAL");
+  }
 
-    if (bolaX > 570) {
-      bolaX = 50;
+}
+
+function distance(){
+
+  let dx=(x+20)-ballX;
+  let dy=(y+20)-ballY;
+
+  return Math.sqrt(dx*dx+dy*dy);
+
+}
+
+function shoot(){
+
+  if(!playing)return;
+
+  if(distance()>80){
+
+    showMessage("CHEGUE MAIS PERTO DA BOLA!");
+
+    return;
+
+  }
+
+  showMessage("⚡ CHUTE!");
+
+  ballX=x+35;
+  ballY=y+5;
+
+  updateBall();
+
+  let interval=setInterval(()=>{
+
+    ballX+=35;
+
+    updateBall();
+
+    if(ballX>field.clientWidth-10){
+
+      clearInterval(interval);
+
+      blueScore++;
+
+      document.getElementById("blueScore").textContent=blueScore;
+
+      showMessage("⚽ GOOOOOL!");
+
+      setTimeout(resetPositions,700);
+
     }
 
-    bola.style.left = bolaX + "px";
-  }, 300);
+  },50);
+
 }
 
-atualizar();
+function passBall(){
+
+  if(!playing)return;
+
+  if(distance()>90){
+
+    showMessage("A BOLA ESTÁ LONGE!");
+
+    return;
+
+  }
+
+  showMessage("PASSE!");
+
+  ballX+=100;
+
+  if(ballX>field.clientWidth-40){
+    ballX=field.clientWidth-40;
+  }
+
+  updateBall();
+
+}
+
+function showMessage(text){
+
+  const m=document.getElementById("message");
+
+  m.textContent=text;
+  m.style.opacity=1;
+
+  setTimeout(()=>{
+    m.style.opacity=0;
+  },1200);
+
+}
+
+function showHelp(){
+
+  alert(
+`COMO JOGAR
+
+⬆️⬇️⬅️➡️
+Movem o jogador.
+
+CORRER
+Aumenta a velocidade.
+
+PASSE
+Move a bola para frente.
+
+CHUTE
+Tente chegar perto da bola e chute para o gol.
+
+Marque mais gols que o adversário! ⚽`
+  );
+
+}
+
+setInterval(()=>{
+
+  if(!playing)return;
+
+  seconds++;
+
+  let min=Math.floor(seconds/60);
+  let sec=seconds%60;
+
+  document.getElementById("time").textContent=
+    String(min).padStart(2,"0")+":"+
+    String(sec).padStart(2,"0");
+
+},1000);
+
+document.addEventListener("keydown",e=>{
+
+  if(e.key==="ArrowUp")move(0,-1);
+  if(e.key==="ArrowDown")move(0,1);
+  if(e.key==="ArrowLeft")move(-1,0);
+  if(e.key==="ArrowRight")move(1,0);
+
+  if(e.key===" ")shoot();
+
+});
+
+updatePlayer();
+updateBall();
+
 </script>
 
 </body>
